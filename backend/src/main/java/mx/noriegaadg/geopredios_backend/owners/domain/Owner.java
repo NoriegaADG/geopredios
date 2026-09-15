@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Entity
@@ -54,7 +55,7 @@ public class Owner {
 
     @PrePersist
     void beforeInsert() {
-        Instant now = Instant.now();
+        Instant now = currentTimestamp();
 
         if (id == null) {
             id = UUID.randomUUID();
@@ -69,7 +70,11 @@ public class Owner {
 
     @PreUpdate
     void beforeUpdate() {
-        updatedAt = Instant.now();
+        updatedAt = currentTimestamp();
+    }
+
+    private Instant currentTimestamp() {
+        return Instant.now().truncatedTo(ChronoUnit.MICROS);
     }
 
     public UUID getId() {
